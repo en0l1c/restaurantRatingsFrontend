@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 mb-4" *ngFor="let restaurant of restaurants">
+      <div class="card h-100">
+        <div class="image-container">
+          <img [src]="restaurant.image" class="card-img-top resized-image" alt="{{ restaurant.name }}" />
+        </div>
+        <div class="card-body">
+          <a class="nav-link" routerLink="/home">
+            <h5 class="card-title">{{ restaurant.name }}</h5>
+          </a>
+          <p class="card-text">{{ restaurant.address }}</p>
+          <p class="card-text">{{ restaurant.description }}</p>
+        </div>
+        <div class="card-footer">
+          <small class="text-muted">Average Rating: {{ restaurant.averageRating }}</small>
+          <!-- Conditionally display Edit and Delete buttons if isAdmin is true -->
+          <div *ngIf="isAdmin">
+            <button class="btn btn-primary btn-sm" (click)="editRestaurant(restaurant)">Edit</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteRestaurant(restaurant)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

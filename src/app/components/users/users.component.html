@@ -1,0 +1,52 @@
+<div class="container mt-4">
+  <h2>Users</h2>
+  <table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.id || user.userId }}</td>
+      <td>
+        <!-- Editable input field when in edit mode -->
+        <input *ngIf="user.isEditing" [(ngModel)]="user.username" class="form-control" />
+        <span *ngIf="!user.isEditing">{{ user.username }}</span>
+      </td>
+      <td>
+        <!-- Editable input field when in edit mode -->
+        <input *ngIf="user.isEditing" [(ngModel)]="user.email" class="form-control" />
+        <span *ngIf="!user.isEditing">{{ user.email }}</span>
+      </td>
+      <td>
+        <!-- Editable role when in edit mode -->
+        <select *ngIf="user.isEditing" [(ngModel)]="user.role" class="form-control">
+          <option value="0">Admin</option>
+          <option value="1">User</option>
+        </select>
+        <span *ngIf="!user.isEditing">{{ user.role === 0 ? 'Admin' : 'User' }}</span>
+      </td>
+      <td>
+        <!-- Edit, Save and Cancel buttons -->
+        <button *ngIf="!user.isEditing" class="btn btn-primary btn-sm mr-2" (click)="editUser(user)">
+          <i class="bi bi-pencil"></i> Edit
+        </button>
+        <button *ngIf="user.isEditing" class="btn btn-success btn-sm mr-2" (click)="saveUser(user)">
+          <i class="bi bi-save"></i> Save
+        </button>
+        <button *ngIf="user.isEditing" class="btn btn-secondary btn-sm" (click)="cancelEdit(user)">
+          <i class="bi bi-x-circle"></i> Cancel
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="deleteUser(user)">
+          <i class="bi bi-trash"></i> Delete
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

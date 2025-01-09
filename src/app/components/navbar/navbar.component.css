@@ -1,0 +1,124 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #333;
+  color: white;
+}
+
+.navbar-brand a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5rem;
+}
+
+/* Align the login/register buttons and logout to the right */
+.navbar-nav.ml-auto {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Center the search bar */
+.navbar-search-container {
+  display: flex;
+  justify-content: center; /* Center the search bar */
+  flex-grow: 1; /* Ensure it takes up remaining space */
+}
+
+.navbar-search-container form {
+  display: flex;
+  justify-content: center; /* Align the form to the center */
+}
+
+.navbar-search input {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.navbar-search button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-search button:hover {
+  background-color: #0056b3;
+}
+
+.navbar-search-container button i {
+  font-size: 1.2rem; /* Adjust the icon size */
+  color: white; /* Ensure the icon is white */
+}
+
+.navbar-search-container button {
+  padding: 0.5rem; /* Adjust button padding to fit the icon */
+  background-color: #007bff;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-search-container button:hover {
+  background-color: #0056b3;
+}
+
+.navbar-search-container button i {
+  font-size: 1.3rem; /* Slightly larger icon */
+  color: #ffffff; /* White color for the icon */
+}
+
+.navbar-search-container button {
+  padding: 0.5rem 0.8rem; /* Adjust padding for a more balanced look */
+  background-color: #0056b3; /* Elegant green color */
+  border: none;
+  border-radius: 50px; /* Rounded button for a sleek look */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transition effects */
+}
+
+.navbar-search-container button:hover {
+  background-color: #0056b3; /* Darker green on hover */
+  transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+.navbar-search-container button:focus {
+  outline: none; /* Remove focus outline */
+}
+
+.form-inline .form-control {
+  border-radius: 50px; /* Match rounded corners for the input */
+  padding: 0.5rem 1rem; /* Add padding for better spacing */
+  width: 300px; /* Control the width of the search input */
+}
+
+.form-inline .form-control:focus {
+  border-color: #2e41e0; /* Highlight input with green border on focus */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

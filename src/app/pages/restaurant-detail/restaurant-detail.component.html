@@ -1,0 +1,8 @@
+<div *ngIf="restaurant">
+  <img [src]="restaurant.image" alt="{{ restaurant.name }}" />
+  <h2>{{ restaurant.name }}</h2>
+  <p>{{ restaurant.address }}</p>
+  <p>{{ restaurant.phone }}</p>
+  <p>{{ restaurant.description }}</p>
+  <p>Average Rating: {{ restaurant.averageRating }}</p>
+</div>

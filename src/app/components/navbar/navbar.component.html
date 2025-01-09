@@ -1,0 +1,85 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" routerLink="/home">Restaurant Rating</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarContent"
+    aria-controls="navbarContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/home">Home</a> <!-- Link to Home -->
+      </li>
+
+    </ul>
+<!--    <ul class="navbar-nav mr-auto">-->
+
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link" routerLink="/restaurant-card">Restaurants</a> &lt;!&ndash; Link to Restaurant Details &ndash;&gt;-->
+<!--      </li>-->
+<!--    </ul>-->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" *ngIf="isAdmin">
+        <a class="nav-link" routerLink="/restaurant-create">Create Restaurant</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" *ngIf="isAdmin">
+<!--      <li class="nav-item">-->
+        <a class="nav-link" routerLink="/users">Users</a>
+      </li>
+    </ul>
+<!--    <a *ngIf="isAdmin" routerLink="/users">Users</a>-->
+<!--    <ul class="navbar-nav mr-auto">-->
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link" routerLink="/users">Users</a>-->
+<!--      </li>-->
+<!--    </ul>-->
+
+
+    <!-- Centered Search Bar -->
+    <div class="navbar-search-container">
+      <form class="form-inline my-2 my-lg-0" (ngSubmit)="onSearch()">
+        <input
+          class="form-control mr-sm-2"
+          type="search"
+          placeholder="Search Restaurants"
+          aria-label="Search"
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+        />
+        <!-- Search Icon Button -->
+        <!-- Search Icon Button -->
+        <button class="btn search-btn" type="submit">
+          <i class="bi bi-search"></i> <!-- Search Icon -->
+        </button>
+      </form>
+    </div>
+
+    <!-- Align the login/register buttons and logout to the right -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item" *ngIf="!isLoggedIn">
+        <a class="nav-link" routerLink="/login">Sign In</a> <!-- Link to Auth/Login -->
+      </li>
+      <li class="nav-item" *ngIf="!isLoggedIn">
+        <button type="button" class="btn btn-success" routerLink="/register">Sign Up</button>
+        <!--        <a class="nav-link" routerLink="/register">Sign Up</a> &lt;!&ndash; Link to Register &ndash;&gt;-->
+      </li>
+      <li class="nav-item" *ngIf="isLoggedIn">
+        <a class="nav-link" routerLink="#">
+          {{ user?.firstName }} {{ user?.lastName }} ({{ user?.username }})
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="isLoggedIn">
+        <button (click)="logout()" class="btn btn-danger">Logout</button>
+      </li>
+    </ul>
+  </div>
+</nav>
