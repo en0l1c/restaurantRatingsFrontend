@@ -7,7 +7,7 @@ import {LoginComponent} from './components/login/login.component'; // Import Reg
 import { UsersComponent } from './components/users/users.component';  // Import the Users component
 import { AdminGuard} from './guards/admin-guard.service';
 import { RestaurantCardComponent } from './components/restaurant-card/restaurant-card.component';
-// import { RestaurantDetailComponent} from './pages/restaurant-detail/restaurant-detail.component';
+import { RestaurantDetailComponent} from './pages/restaurant-detail/restaurant-detail.component';
 import { RestaurantCreateComponent } from './components/restaurant-create/restaurant-create.component';
 
 const routes: Routes = [
@@ -22,6 +22,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/restaurant-card', pathMatch: 'full' },
   { path: 'restaurant-create', component: RestaurantCreateComponent },
   { path: 'home', component: RestaurantCardComponent },
+  { path: 'restaurant/:id', component: RestaurantDetailComponent },
   // { path: '**', redirectTo: '/home' },
 
 

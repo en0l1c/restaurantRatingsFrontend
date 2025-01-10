@@ -6,14 +6,20 @@
           <img [src]="restaurant.image" class="card-img-top resized-image" alt="{{ restaurant.name }}" />
         </div>
         <div class="card-body">
-          <a class="nav-link" routerLink="/home">
+          <a class="nav-link" [routerLink]="['/restaurant', restaurant.id]">
             <h5 class="card-title">{{ restaurant.name }}</h5>
           </a>
           <p class="card-text">{{ restaurant.address }}</p>
           <p class="card-text">{{ restaurant.description }}</p>
         </div>
         <div class="card-footer">
-          <small class="text-muted">Average Rating: {{ restaurant.averageRating }}</small>
+          <small class="text-muted">
+            Average Rating:
+            <span class="star-rating">
+              <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="averageRatings[restaurant.id] >= star">★</span>
+            </span>
+            {{ averageRatings[restaurant.id] | number: '1.1-1' }}
+          </small>
           <!-- Conditionally display Edit and Delete buttons if isAdmin is true -->
           <div *ngIf="isAdmin">
             <button class="btn btn-primary btn-sm" (click)="editRestaurant(restaurant)">Edit</button>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,13 +10,19 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
+  returnUrl: string = '/home';
+
   username: string = '';
   password: string = '';
   successMessage: string = '';  // Add success message variable
   errorMessage: string = '';    // Add error message variable
 
-  constructor(private apiService: ApiService, private router: Router) { }
+  constructor(private apiService: ApiService, private router: Router, private route: ActivatedRoute) { }
 
+  ngOnInit() {
+    // Get the returnUrl query parameter
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/'; // Default to home if no return URL is found
+  }
 
   // dont take token as string, but as token:
   onLogin() {
@@ -26,7 +32,9 @@ export class LoginComponent {
       const token = response.token;  // Now 'response' is typed correctly with 'token'
       localStorage.setItem('authToken', token);  // Store only the JWT token
       this.apiService.setIsLoggedIn(true);  // Update the logged-in status
-      this.router.navigate(['/home']);
+      //this.router.navigate(['/home']);
+      // Handle login logic here, then navigate back to the returnUrl
+      this.router.navigate([this.returnUrl]);
       this.successMessage = "Login successful!";
       // setTimeout(() => {
       //   this.router.navigate(['/home']);

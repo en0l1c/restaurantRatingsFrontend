@@ -1,14 +1,12 @@
-.image-container {
-  background-color: #f5f5f5; /* Light gray as default background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px; /* Matches max-height of the image */
-  overflow: hidden;
+.star-rating {
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-.resized-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+.star-rating span {
+  color: #ccc; /* Default color */
+}
+
+.star-rating span.filled {
+  color: gold; /* Filled stars will be golden */
 }

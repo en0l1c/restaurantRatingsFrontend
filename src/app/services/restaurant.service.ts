@@ -1,39 +1,8 @@
-// import { Injectable } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-// import { Observable } from 'rxjs';
-// import { Restaurant } from '../restaurant.model';
-//
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class RestaurantService {
-//   private apiUrl = 'http://localhost:8080/restaurants';  // Backend URL
-//
-//   constructor(private http: HttpClient) {}
-//
-//   // Method to create a new restaurant
-//   createRestaurant(restaurant: Restaurant): Observable<Restaurant> {
-//     return this.http.post<Restaurant>(this.apiUrl, restaurant);
-//   }
-//
-//   // Method to get all restaurants
-//   getRestaurants(): Observable<Restaurant[]> {
-//     return this.http.get<Restaurant[]>(this.apiUrl);
-//   }
-//
-//   // Method to get restaurant details by ID
-//   getRestaurantById(id: number): Observable<Restaurant> {
-//     return this.http.get<Restaurant>(`${this.apiUrl}/${id}`);
-//   }
-// }
-
-
-
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {Restaurant} from '../restaurant.model';
+import {Review} from '../review.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +35,42 @@ export class RestaurantService {
     const headers = { 'Authorization': `Bearer ${token}` };
     return this.http.delete<void>(`${this.baseUrl}/${restaurantId}`, { headers });
   }
+
+  // reviews:
+  // Fetch reviews for a specific restaurant
+  getReviewsForRestaurant(restaurantId: number): Observable<Review[]> {
+    return this.http.get<Review[]>(`${this.baseUrl}/${restaurantId}/reviews`);
+  }
+
+  // Submit a new review
+  submitReview(review: Review, restaurantId: number): Observable<Review> {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('No token found');
+      return throwError('No token found');
+    }
+
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+
+    return this.http.post<Review>(`${this.baseUrl}/${restaurantId}/reviews/`, review, { headers });
+  }
+
+
+
+  // Delete a review
+  deleteReview(reviewId: number): Observable<void> {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('No token found');
+      return throwError('No token found');
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
+    return this.http.delete<void>(`${this.baseUrl}/reviews/${reviewId}`, { headers });
+  }
+
+
 
 
 }
