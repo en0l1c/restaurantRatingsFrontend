@@ -24,7 +24,7 @@
 
 
   <!-- Rating system and comment submission form for logged-in users -->
-  <div *ngIf="isLoggedIn" class="review-form mt-4">
+  <div *ngIf="isLoggedIn && !hasReviewed" class="review-form mt-4">
     <h5>Submit Your Review:</h5>
 
     <!-- Star Rating System -->
@@ -39,6 +39,12 @@
 
     <button class="btn btn-primary mt-2" (click)="submitReview()">Submit Review</button>
   </div>
+
+  <!-- prompt users that already submitted a review -->
+  <div *ngIf="isLoggedIn && hasReviewed" class="mt-4">
+    <p>You have already submitted a review for this restaurant.</p>
+  </div>
+
   <!-- Guest users are prompted to log in -->
   <div *ngIf="!isLoggedIn" class="mt-4">
     <p>Please <a routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">log in</a> to submit a review.</p>

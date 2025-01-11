@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {Restaurant} from '../restaurant.model';
 import {Review} from '../review.model';
@@ -57,6 +57,12 @@ export class RestaurantService {
     return this.http.post<Review>(`${this.baseUrl}/${restaurantId}/reviews/`, review, { headers });
   }
 
+  // Update a review
+  updateReview(updatedReview: Review, restaurantId: number, reviewId: number): Observable<Review> {
+    const url = `${this.baseUrl}/restaurants/${restaurantId}/reviews/${reviewId}`;
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('authToken')}`);
+    return this.http.put<Review>(url, updatedReview, { headers });
+  }
 
 
   // Delete a review
