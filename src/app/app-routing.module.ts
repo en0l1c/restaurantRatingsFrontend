@@ -11,6 +11,16 @@ import { RestaurantDetailComponent} from './pages/restaurant-detail/restaurant-d
 import { RestaurantCreateComponent } from './components/restaurant-create/restaurant-create.component';
 
 const routes: Routes = [
+  {
+    path: 'create',
+    component: RestaurantCreateComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'users',
+    component: UsersComponent,
+    canActivate: [AdminGuard],
+  },
   { path: '', component: RestaurantCardComponent },  // Default route, Home page
   // { path: 'home', component: HomeComponent },  // Explicit Home route
   //{ path: 'users', component: UsersComponent, canActivate: [AdminGuard] },

@@ -3,22 +3,33 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, catchError, Observable, throwError} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import {Restaurant} from '../restaurant.model';
+import {User} from '../user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
+
   private baseUrl: string = 'http://localhost:8080'; // Spring Boot backend URL
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);  // Track login status
+
+  // private isLoggedInSubject = new BehaviorSubject<boolean>(false);  // Track login status
+
+  // BehaviorSubject for login status (initialized based on token existence)
+  private isLoggedInSubject = new BehaviorSubject<boolean>(!!localStorage.getItem('authToken'));
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
+
+  // BehaviorSubject for current user data (initialized as null)
+  private userSubject = new BehaviorSubject<User | null>(null);
+  user$ = this.userSubject.asObservable();
 
 
   constructor(private http: HttpClient) { }
 
   // Observable to watch the login state
-  get isLoggedIn$(): Observable<boolean> {
-    return this.isLoggedInSubject.asObservable();
-  }
+  // get isLoggedIn$(): Observable<boolean> {
+  //   return this.isLoggedInSubject.asObservable();
+  // }
 
   // Update the login state
   setIsLoggedIn(status: boolean): void {
