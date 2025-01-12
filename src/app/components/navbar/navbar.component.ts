@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {Router} from '@angular/router';
-import {ApiService} from '../../services/api.service';  // Add FormsModule
+import {ApiService} from '../../services/api.service';
+import {Subject} from 'rxjs';
+import {RestaurantService} from '../../services/restaurant.service';  // Add FormsModule
 
 @Component({
   selector: 'app-navbar',
@@ -9,15 +11,20 @@ import {ApiService} from '../../services/api.service';  // Add FormsModule
   styleUrls: ['./navbar.component.css'],
   standalone: false
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
-  searchQuery: string = ''; // Holds the value of the search input
+  searchQuery: string = ''; // Holds the value of the search-results input
   user: any; // Store the user details for display
 
   isAdmin: boolean = false;
+  private destroy$ = new Subject<void>();
 
 
-  constructor(private apiService: ApiService, private router: Router) { }
+  constructor(
+    private apiService: ApiService,
+    private router: Router,
+    private restaurantService: RestaurantService,
+  ) { }
 
   ngOnInit() {
     this.apiService.isLoggedIn$.subscribe(status => {
@@ -51,8 +58,19 @@ export class NavbarComponent {
 
   onSearch(): void {
     if (this.searchQuery) {
-      console.log('Search Query:', this.searchQuery);
-      // Handle the search logic here
+      this.restaurantService
+        .searchRestaurants(this.searchQuery)
+        .subscribe((restaurants) => {
+          // Navigate to the search-results results page with the query
+          this.router.navigate(['/search-results'], {
+            queryParams: { q: this.searchQuery },
+          });
+        });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

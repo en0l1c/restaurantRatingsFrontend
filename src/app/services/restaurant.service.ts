@@ -54,5 +54,11 @@ export class RestaurantService {
     return this.http.post(`${this.baseUrl}/create`, restaurant);
   }
 
+  searchRestaurants(query: string): Observable<Restaurant[]> {
+    return this.http.get<Restaurant[]>(`${this.baseUrl}/search`, {
+      params: { q: query },
+    });
+  }
+
 
 }

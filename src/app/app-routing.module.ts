@@ -9,6 +9,7 @@ import { AdminGuard} from './guards/admin-guard.service';
 import { RestaurantCardComponent } from './components/restaurant-card/restaurant-card.component';
 import { RestaurantDetailComponent} from './pages/restaurant-detail/restaurant-detail.component';
 import { RestaurantCreateComponent } from './components/restaurant-create/restaurant-create.component';
+import {SearchResultsComponent} from './components/search-results/search-results.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,8 @@ const routes: Routes = [
   { path: 'restaurant-create', component: RestaurantCreateComponent },
   { path: 'home', component: RestaurantCardComponent },
   { path: 'restaurant/:id', component: RestaurantDetailComponent },
+  { path: 'search-results', component: SearchResultsComponent },
+
   // { path: '**', redirectTo: '/home' },
 
 

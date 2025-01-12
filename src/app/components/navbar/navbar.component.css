@@ -19,10 +19,10 @@
   justify-content: flex-end;
 }
 
-/* Center the search bar */
+/* Center the search-results bar */
 .navbar-search-container {
   display: flex;
-  justify-content: center; /* Center the search bar */
+  justify-content: center; /* Center the search-results bar */
   flex-grow: 1; /* Ensure it takes up remaining space */
 }
 
@@ -90,7 +90,7 @@
 .form-inline .form-control {
   border-radius: 50px; /* Match rounded corners for the input */
   padding: 0.5rem 1rem; /* Add padding for better spacing */
-  width: 300px; /* Control the width of the search input */
+  width: 300px; /* Control the width of the search-results input */
 }
 
 .form-inline .form-control:focus {
