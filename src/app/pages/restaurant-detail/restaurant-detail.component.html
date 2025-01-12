@@ -1,47 +1,52 @@
 <div *ngIf="restaurant" class="container">
 
-  <div class="card mb-4">
-    <div class="image-container" style="height: 300px; overflow: hidden;">
-      <img [src]="restaurant.image" class="card-img-top" alt="{{ restaurant.name }}" style="object-fit: cover; height: 100%; width: 100%;" />
+  <div *ngIf="restaurant; else loading">
+    <div class="card mb-4">
+      <div class="image-container" style="height: 300px; overflow: hidden;">
+        <img [src]="restaurant.image" class="card-img-top" alt="{{ restaurant.name }}" style="object-fit: cover; height: 100%; width: 100%;" />
+      </div>
+
+      <div class="card-body">
+        <h5 class="card-title">{{ restaurant.name }}</h5>
+        <p class="card-text"><strong>Address:</strong> {{ restaurant.address }}</p>
+        <p class="card-text"><strong>Description:</strong> {{ restaurant.description }}</p>
+        <p class="card-text"><strong>Phone:</strong> {{ restaurant.phone }}</p>
+        <p class="card-text"><strong>Average Rating:</strong>
+          <span class="star-rating">
+              <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="averageRating >= star">★</span>
+           </span>
+          {{ averageRating | number: '1.1-1' }} </p>
+      </div>
     </div>
 
-    <div class="card-body">
-      <h5 class="card-title">{{ restaurant.name }}</h5>
-      <p class="card-text"><strong>Address:</strong> {{ restaurant.address }}</p>
-      <p class="card-text"><strong>Description:</strong> {{ restaurant.description }}</p>
-      <p class="card-text"><strong>Phone:</strong> {{ restaurant.phone }}</p>
-      <p class="card-text"><strong>Average Rating:</strong>
-        <span class="star-rating">
-            <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="averageRating >= star">★</span>
-         </span>
-        {{ averageRating | number: '1.1-1' }} </p>
+    <div *ngIf="!isLoggedIn" class="mt-4">
+      <p>Please <a routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">log in</a> to submit a review.</p>
+    </div>
+
+    <div *ngIf="isLoggedIn && hasReviewed" class="mt-4">
+      <p>You have already submitted a review for this restaurant.</p>
+    </div>
+
+    <div *ngIf="reviews.length >= 0" class="reviews-section">
+      <app-review
+        [reviews]="reviews"
+        [restaurantId]="restaurant.id!"
+        [isLoggedIn]="isLoggedIn"
+        [userId]="userId"
+        [hasReviewed]="hasReviewed"
+        (reviewAdded)="loadReviews(restaurant.id!)"
+        (reviewUpdated)="loadReviews(restaurant.id!)"
+        (reviewDeleted)="loadReviews(restaurant.id!)">
+      </app-review>
+    </div>
+
+    <div *ngIf="reviews && reviews.length === 0" class="no-reviews">
+      <p style="color:red;">No reviews available for this restaurant.</p>
     </div>
   </div>
-
-  <div *ngIf="!isLoggedIn" class="mt-4">
-    <p>Please <a routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">log in</a> to submit a review.</p>
-  </div>
-
-  <div *ngIf="isLoggedIn && hasReviewed" class="mt-4">
-    <p>You have already submitted a review for this restaurant.</p>
-  </div>
-
-  <div *ngIf="reviews.length >= 0" class="reviews-section">
-    <app-review
-      [reviews]="reviews"
-      [restaurantId]="restaurant.id"
-      [isLoggedIn]="isLoggedIn"
-      [userId]="userId"
-      [hasReviewed]="hasReviewed"
-      (reviewAdded)="loadReviews(restaurant.id)"
-      (reviewUpdated)="loadReviews(restaurant.id)"
-      (reviewDeleted)="loadReviews(restaurant.id)">
-    </app-review>
-  </div>
-
-  <div *ngIf="reviews && reviews.length === 0" class="no-reviews">
-    <p style="color:red;">No reviews available for this restaurant.</p>
-  </div>
+  <ng-template #loading>
+    Loading restaurant details...
+  </ng-template>
 </div>
 
 

@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
 })
 export class RestaurantDetailComponent implements OnInit, OnDestroy {
   currentUrl: string | undefined;
-  restaurant: Restaurant | undefined;
+  restaurant!: Restaurant;
   reviews: Review[] = [];
   rating: number = 0;
   comment: string = '';
