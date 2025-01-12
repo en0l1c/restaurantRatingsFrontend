@@ -4,5 +4,5 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  // ... other user properties
+  role: number;
 }

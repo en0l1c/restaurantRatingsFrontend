@@ -8,4 +8,5 @@ export interface Review {
   rating: number;
   comment: string;
   isEditing?: boolean;
+  hidden?: boolean;
 }

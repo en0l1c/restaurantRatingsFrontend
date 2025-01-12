@@ -25,6 +25,7 @@ export class RestaurantDetailComponent implements OnInit, OnDestroy {
   userId: number = -1;
   averageRating: number = 0;
   hasReviewed: boolean = false;
+  isAdmin: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -63,6 +64,8 @@ export class RestaurantDetailComponent implements OnInit, OnDestroy {
         this.apiService.getCurrentUser().subscribe({
           next: (user) => {
             this.userId = user.id;
+            this.isAdmin = user.role === 0; // Check if the user is an admin
+
             console.log("User ID fetched:", this.userId); // Log the user ID
 
             // Check if user has reviewed after reviews are loaded AND user is fetched

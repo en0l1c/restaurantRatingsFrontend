@@ -34,6 +34,7 @@
         [isLoggedIn]="isLoggedIn"
         [userId]="userId"
         [hasReviewed]="hasReviewed"
+        [isAdmin]="isAdmin"
         (reviewAdded)="loadReviews(restaurant.id!)"
         (reviewUpdated)="loadReviews(restaurant.id!)"
         (reviewDeleted)="loadReviews(restaurant.id!)">

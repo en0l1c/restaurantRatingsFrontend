@@ -63,4 +63,15 @@ export class ReviewService {
 
     return this.http.delete<void>(`${this.baseUrl}/${restaurantId}/reviews/${reviewId}`, { headers });
   }
+
+  toggleReviewHiddenStatus(restaurantId: number, reviewId: number): Observable<Review> {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('No token found');
+      return throwError('No token found');
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put<Review>(`${this.baseUrl}/${restaurantId}/reviews/${reviewId}/hide`, {}, { headers });
+  }
 }
