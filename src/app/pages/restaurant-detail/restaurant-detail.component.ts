@@ -1,18 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import { RestaurantService } from '../../services/restaurant.service';
 import { ApiService } from '../../services/api.service';
 import { Restaurant } from '../../restaurant.model';
 import { Review } from '../../review.model';
-import {AverageRatingService} from '../../services/average-rating.service';
+import { AverageRatingService } from '../../services/average-rating.service';
+import { ReviewComponent } from '../../components/review/review.component';
+import { ReviewService } from '../../services/review.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-restaurant-detail',
   templateUrl: './restaurant-detail.component.html',
   styleUrls: ['./restaurant-detail.component.css'],
-  standalone: false
+  standalone: false,
 })
-export class RestaurantDetailComponent implements OnInit {
+export class RestaurantDetailComponent implements OnInit, OnDestroy {
   currentUrl: string | undefined;
   restaurant: Restaurant | undefined;
   reviews: Review[] = [];
@@ -20,296 +23,121 @@ export class RestaurantDetailComponent implements OnInit {
   comment: string = '';
   isLoggedIn: boolean = false;
   userId: number = -1;
-  averageRating: number = 0; // Added property to store average rating
-  hasReviewed: boolean = false; // Check if user has reviewed
+  averageRating: number = 0;
+  hasReviewed: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private restaurantService: RestaurantService,
     private router: Router,
     private apiService: ApiService,
-    private averageRatingService: AverageRatingService // Inject the shared service
-  ) {}
+    private reviewService: ReviewService,
+    private averageRatingService: AverageRatingService
+  ) {
+    this.currentUrl = this.router.url;
+  }
 
+  private averageRatingSubscription: Subscription = new Subscription();
 
   ngOnInit(): void {
-    this.currentUrl = this.router.url;
-    const id = +this.route.snapshot.paramMap.get('id')!;
-
-    // Φόρτωση του εστιατορίου
-    this.restaurantService.getRestaurantById(id).subscribe((data) => {
-      this.restaurant = data;
+    // Capture the current route URL with query parameters
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentUrl = this.router.createUrlTree([event.url]).toString();
+      }
     });
 
-    // Παρακολούθηση του αν ο χρήστης είναι συνδεδεμένος
+    const id = +this.route.snapshot.paramMap.get('id')!;
+    this.averageRatingSubscription = this.averageRatingService.averageRating$.subscribe(
+      (rating) => this.averageRating = rating
+    );
+
+    this.restaurantService.getRestaurantById(id).subscribe((data) => {
+      this.restaurant = data;
+      this.loadReviews(id); // Load reviews after getting the restaurant
+    });
+
     this.apiService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
-
       if (this.isLoggedIn) {
-        // Αν είναι συνδεδεμένος, φορτώστε το userId
         this.apiService.getCurrentUser().subscribe({
           next: (user) => {
             this.userId = user.id;
+            console.log("User ID fetched:", this.userId); // Log the user ID
 
-            // Φόρτωση των reviews
-            this.restaurantService.getReviewsForRestaurant(id).subscribe((reviews) => {
-              this.reviews = reviews;
-              this.calculateAverageRating();
-
-              // Υπολογισμός του hasReviewed
-              this.updateHasReviewed();
-            });
-          },
-          error: (err) => {
-            console.error('Error fetching user details:', err);
-          },
-        });
-      } else {
-        // Αν δεν είναι συνδεδεμένος, φορτώστε μόνο τα reviews
-        this.restaurantService.getReviewsForRestaurant(id).subscribe((reviews) => {
-          this.reviews = reviews;
-          this.calculateAverageRating();
-        });
-      }
-    });
-  }
-
-// Μέθοδος για υπολογισμό του hasReviewed
-  updateHasReviewed(): void {
-    this.hasReviewed = this.reviews.some((review) => review.userId === this.userId);
-  }
-
-
-
-
-  calculateAverageRating(): void {
-    if (this.reviews.length > 0) {
-      const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0);
-      this.averageRating = totalRating / this.reviews.length;
-    } else {
-      this.averageRating = 0;  // Default to 0 if there are no reviews
-    }
-
-    // pass the avgRating to averageRating service
-    this.averageRatingService.setAverageRating(this.averageRating);
-  }
-
-
-
-
-  submitReview(): void {
-    if (!this.isLoggedIn) {
-      alert('Please log in to submit a review.');
-      return;
-    }
-
-    const newReview: Omit<Review, 'userId'> = {
-      restaurantId: this.restaurant!.id!,
-      rating: this.rating,
-      comment: this.comment,
-    };
-
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      console.error('No auth token found!');
-      return;
-    }
-
-    this.restaurantService.submitReview(newReview, this.restaurant!.id).subscribe({
-      next: (response) => {
-        this.reviews.push(response);
-        this.calculateAverageRating();  // Recalculate average after submitting review
-        this.rating = 0;
-        this.comment = '';
-      },
-      error: (err) => {
-        console.error('Failed to submit review:', err);
-        if (err.status === 401) {
-          alert('Session expired. Please log in again.');
-        }
-        else if (err.status === 409) {
-                  alert('You have already submitted a review for this restaurant.');
-
-        }
-        else {
-          alert('Unable to submit review. Please try again.');
-        }
-      },
-    });
-  }
-
-  editReview(review: Review): void {
-    if (this.isLoggedIn && review.userId === this.userId) {
-      this.rating = review.rating;
-      this.comment = review.comment;
-
-      // Ensure restaurantId and review.id are defined before calling the service
-      if (review.restaurantId && review.id) {
-        const updatedReview: Review = {
-          restaurantId: review.restaurantId,
-          rating: this.rating,
-          comment: this.comment,
-          userId: this.userId,  // You might need to pass userId as well, depending on your backend requirements
-        };
-
-        // Call the updateReview method
-        this.restaurantService.updateReview(updatedReview, review.restaurantId, review.id)
-          .subscribe({
-            next: (response) => {
-              console.log('Review updated:', response);
-            },
-            error: (err) => {
-              console.error('Error updating review:', err);
-              alert('Failed to update the review.');
+            // Check if user has reviewed after reviews are loaded AND user is fetched
+            if (this.reviews.length > 0) {
+              this.checkIfUserHasReviewed();
             }
-          });
-      } else {
-        console.error('Restaurant ID or Review ID is missing.');
-        alert('Invalid review or restaurant data.');
-      }
-    } else {
-      alert('You can only edit your own review.');
-    }
-  }
-
-
-
-  deleteReview(review: Review): void {
-    if (this.isLoggedIn && review.userId === this.userId) {
-      if (review.id !== undefined) {
-        this.restaurantService.deleteReview(review.id).subscribe({
-          next: () => {
-            this.reviews = this.reviews.filter((r) => r.id !== review.id);  // Remove review from the list
           },
-          error: (err) => {
-            console.error('Error deleting review:', err);
-          }
+          error: (err) => console.error('Error fetching user details:', err),
         });
-      } else {
-        console.error('Review ID is undefined, unable to delete.');
       }
-    } else {
-      alert('You can only delete your own review.');
+    });
+  }
+
+  loadReviews(restaurantId: number | null): void {
+    if (restaurantId === null) {
+      console.error('Restaurant ID is null. Cannot load reviews.');
+      return;
+    }
+    this.reviewService.getReviewsForRestaurant(restaurantId).subscribe((reviews) => {
+      this.reviews = reviews;
+      console.log("Reviews fetched:", reviews); // Log the fetched reviews
+      this.averageRatingService.calculateAndSetAverageRating(this.reviews);
+
+      // If restaurantId is not in the returned reviews, add it:
+      this.reviews = reviews.map(review => ({
+        ...review,
+        restaurantId: review.restaurantId || restaurantId // Use existing restaurantId or the one from the parameter
+      }));
+
+      // Check if user has reviewed after reviews are loaded AND user is fetched
+      if (this.userId !== -1) {
+        this.checkIfUserHasReviewed();
+      }
+    });
+  }
+
+  checkIfUserHasReviewed(): void {
+    console.log("Checking if user has reviewed...");
+    if (this.isLoggedIn && this.userId !== -1 && this.reviews) {
+      const userIdString = String(this.userId);
+      this.hasReviewed = this.reviews.some((review) => {
+        // Access nested user object
+        if (review.user === undefined || review.user.id === undefined) {
+          return false;
+        }
+        return String(review.user.id) === userIdString;
+      });
+      console.log("restaurant-detail - userId:", this.userId);
+      console.log("restaurant-detail - hasReviewed:", this.hasReviewed);
     }
   }
 
-  onStarClick(value: number): void {
-    this.rating = value; // Update the rating when a star is clicked
+  handleReviewAdded(newReview: Review): void {
+    this.reviews.push(newReview);
+    this.checkIfUserHasReviewed();
+  }
+
+  handleReviewUpdated(updatedReview: Review): void {
+    const index = this.reviews.findIndex((review) => review.id === updatedReview.id);
+    if (index !== -1) {
+      this.reviews[index] = updatedReview;
+      this.checkIfUserHasReviewed();
+    }
+  }
+
+  handleReviewDeleted(deletedReviewId: number): void {
+    this.reviews = this.reviews.filter((review) => review.id !== deletedReviewId);
+    this.checkIfUserHasReviewed();
+  }
+
+  ngOnDestroy(): void {
+    this.averageRatingSubscription.unsubscribe();
   }
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ngOnInit(): void {
-//   this.currentUrl = this.router.url;
-//   const id = +this.route.snapshot.paramMap.get('id')!;
-//
-//   this.restaurantService.getRestaurantById(id).subscribe((data) => {
-//     this.restaurant = data;
-//   });
-//
-//   this.restaurantService.getReviewsForRestaurant(id).subscribe((reviews) => {
-//     this.reviews = reviews;
-//     this.calculateAverageRating();  // Calculate average rating when reviews are fetched
-//   });
-//
-//   this.apiService.isLoggedIn$.subscribe((status) => {
-//     this.isLoggedIn = status;
-//     if (this.isLoggedIn) {
-//       this.apiService.getCurrentUser().subscribe({
-//         next: (user) => {
-//           this.userId = user.id;
-//         },
-//         error: (err) => {
-//           console.error('Error fetching user details:', err);
-//         },
-//       });
-//     }
-//   });
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// submitReview(): void {
-//   if (!this.isLoggedIn) {
-//     alert('Please log in to submit a review.');
-//     return;
-//   }
-//
-//   const newReview: Omit<Review, 'userId'> = {
-//     restaurantId: this.restaurant!.id!,
-//     rating: this.rating,
-//     comment: this.comment,
-//   };
-//
-//   const token = localStorage.getItem('authToken');
-//   if (!token) {
-//     console.error('No auth token found!');
-//     return;
-//   }
-//
-//   this.restaurantService.submitReview(newReview, this.restaurant!.id).subscribe({
-//     next: (response) => {
-//       this.reviews.push(response);
-//       this.calculateAverageRating();
-//       this.updateHasReviewed();
-//       this.rating = 0;
-//       this.comment = '';
-//     },
-//     error: (err) => {
-//       console.error('Failed to submit review:', err);
-//       if (err.status === 401) {
-//         alert('Session expired. Please log in again.');
-//       } else if (err.status === 409) {
-//         alert('You have already submitted a review for this restaurant.');
-//       } else {
-//         alert('Unable to submit review. Please try again.');
-//       }
-//     },
-//   });
-// }

@@ -11,56 +11,56 @@
   color: gold; /* Filled stars will be golden */
 }
 
-.review p {
-  font-size: 1rem;
-  margin: 0.5rem 0;
-}
+/*.review p {*/
+/*  font-size: 1rem;*/
+/*  margin: 0.5rem 0;*/
+/*}*/
 
-.review p strong {
-  font-weight: bold;
-}
+/*.review p strong {*/
+/*  font-weight: bold;*/
+/*}*/
 
-.review {
-  background-color: #f9f9f9; /* Light grey background for reviews */
-  border: 1px solid #ddd; /* Border for separation */
-  border-radius: 8px; /* Rounded corners */
-  padding: 15px;
-  margin-bottom: 15px; /* Add space between reviews */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  transition: transform 0.3s ease-in-out; /* Smooth hover effect */
-}
+/*.review {*/
+/*  background-color: #f9f9f9; !* Light grey background for reviews *!*/
+/*  border: 1px solid #ddd; !* Border for separation *!*/
+/*  border-radius: 8px; !* Rounded corners *!*/
+/*  padding: 15px;*/
+/*  margin-bottom: 15px; !* Add space between reviews *!*/
+/*  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); !* Subtle shadow *!*/
+/*  transition: transform 0.3s ease-in-out; !* Smooth hover effect *!*/
+/*}*/
 
-.review:hover {
-  transform: translateY(-5px); /* Slight lift effect on hover */
-}
+/*.review:hover {*/
+/*  transform: translateY(-5px); !* Slight lift effect on hover *!*/
+/*}*/
 
-.review p {
-  margin: 5px 0; /* Spacing between each line in the review */
-}
+/*.review p {*/
+/*  margin: 5px 0; !* Spacing between each line in the review *!*/
+/*}*/
 
-.review strong {
-  color: #333; /* Darker color for the labels */
-}
+/*.review strong {*/
+/*  color: #333; !* Darker color for the labels *!*/
+/*}*/
 
-.review .review-rating {
-  display: flex;
-  align-items: center;
-}
+/*.review .review-rating {*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*}*/
 
-.review .review-rating span {
-  margin-right: 5px; /* Space between stars */
-}
+/*.review .review-rating span {*/
+/*  margin-right: 5px; !* Space between stars *!*/
+/*}*/
 
-.review .review-comment {
-  font-style: italic;
-  color: #555; /* Lighter color for comments */
-  margin-top: 10px;
-}
+/*.review .review-comment {*/
+/*  font-style: italic;*/
+/*  color: #555; !* Lighter color for comments *!*/
+/*  margin-top: 10px;*/
+/*}*/
 
-.review .review-actions {
-  margin-top: 10px;
-}
+/*.review .review-actions {*/
+/*  margin-top: 10px;*/
+/*}*/
 
-.review-actions button {
-  margin-right: 10px; /* Space between buttons */
-}
+/*.review-actions button {*/
+/*  margin-right: 10px; !* Space between buttons *!*/
+/*}*/

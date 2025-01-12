@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>Create New Restaurant</h2>
+  <h2>{{ isEditing ? 'Edit' : 'Create New' }} Restaurant</h2>
   <form (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="name">Name</label>
@@ -21,6 +21,6 @@
       <label for="image">Image URL</label>
       <input type="text" class="form-control" id="image" [(ngModel)]="image" name="image">
     </div>
-    <button type="submit" class="btn btn-primary">Create Restaurant</button>
+    <button type="submit" class="btn btn-primary">{{ isEditing ? 'Save Changes' : 'Create Restaurant' }}</button>
   </form>
 </div>

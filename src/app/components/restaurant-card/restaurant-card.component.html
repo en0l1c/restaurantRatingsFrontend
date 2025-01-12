@@ -20,7 +20,6 @@
             </span>
             {{ averageRatings[restaurant.id] | number: '1.1-1' }}
           </small>
-          <!-- Conditionally display Edit and Delete buttons if isAdmin is true -->
           <div *ngIf="isAdmin">
             <button class="btn btn-primary btn-sm" (click)="editRestaurant(restaurant)">Edit</button>
             <button class="btn btn-danger btn-sm" (click)="deleteRestaurant(restaurant)">Delete</button>

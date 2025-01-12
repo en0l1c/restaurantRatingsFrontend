@@ -1,0 +1,61 @@
+<div *ngIf="!hasReviewed && isLoggedIn" class="review-form mt-4">
+  <h5>Submit Your Review:</h5>
+
+  <div class="star-rating">
+    <span *ngFor="let star of [1, 2, 3, 4, 5]" (click)="onStarClick(star)" [class.filled]="rating >= star">
+      ★
+    </span>
+  </div>
+
+  <textarea [(ngModel)]="comment" class="form-control mt-2" placeholder="Enter your comment here..."></textarea>
+
+  <button class="btn btn-primary mt-2" (click)="submitReview()">Submit Review</button>
+</div>
+
+<div *ngIf="reviews && reviews.length > 0" class="reviews-section">
+
+  <div *ngIf="userReview" class="review">
+    <div class="d-flex align-items-center mb-2">
+      <strong>Your Rating:</strong>
+      <div class="star-rating ms-2">
+        <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="userReview.rating >= star">★</span>
+      </div>
+    </div>
+    <p>
+      <strong>Comment:</strong>
+      <ng-container *ngIf="!userReview.isEditing; else editCommentTemplate">
+        {{ userReview.comment }}
+      </ng-container>
+      <ng-template #editCommentTemplate>
+        <textarea [(ngModel)]="userReview.comment" class="form-control"></textarea>
+      </ng-template>
+    </p>
+    <div class="mt-2">
+      <div *ngIf="!userReview.isEditing; else editingMode">
+        <button (click)="userReview.isEditing = true" class="btn btn-sm btn-outline-primary me-2">Edit</button>
+        <button (click)="deleteReview(userReview)" class="btn btn-sm btn-outline-danger">Delete</button>
+      </div>
+      <ng-template #editingMode>
+        <div class="star-rating">
+          <span *ngFor="let star of [1, 2, 3, 4, 5]" (click)="userReview.rating = star" [class.filled]="userReview.rating >= star">★</span>
+        </div>
+        <button (click)="editReview(userReview)" class="btn btn-sm btn-primary me-2">Save Changes</button>
+        <button (click)="userReview.isEditing = false" class="btn btn-sm btn-outline-secondary">Cancel</button>
+      </ng-template>
+    </div>
+  </div>
+
+  <div *ngFor="let review of otherReviews" class="review">
+    <div class="d-flex align-items-center mb-2">
+      <strong>Rating:</strong>
+      <div class="star-rating ms-2">
+        <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="review.rating >= star">★</span>
+      </div>
+    </div>
+    <p>
+      <strong>Comment:</strong>
+      {{ review.comment }}
+    </p>
+  </div>
+
+</div>

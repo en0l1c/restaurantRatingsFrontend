@@ -1,7 +1,5 @@
 <div *ngIf="restaurant" class="container">
 
-
-  <!-- Restaurant Details -->
   <div class="card mb-4">
     <div class="image-container" style="height: 300px; overflow: hidden;">
       <img [src]="restaurant.image" class="card-img-top" alt="{{ restaurant.name }}" style="object-fit: cover; height: 100%; width: 100%;" />
@@ -16,60 +14,53 @@
         <span class="star-rating">
             <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="averageRating >= star">★</span>
          </span>
-        {{ averageRating | number: '1.1-1' }} <!-- Display the average rating -->
-      </p>
+        {{ averageRating | number: '1.1-1' }} </p>
     </div>
   </div>
 
-
-
-  <!-- Rating system and comment submission form for logged-in users -->
-  <div *ngIf="isLoggedIn && !hasReviewed" class="review-form mt-4">
-    <h5>Submit Your Review:</h5>
-
-    <!-- Star Rating System -->
-    <div class="star-rating">
-      <span *ngFor="let star of [1, 2, 3, 4, 5]" (click)="onStarClick(star)" [class.filled]="rating >= star">
-        ★
-      </span>
-    </div>
-
-    <!-- Comment Section -->
-    <textarea [(ngModel)]="comment" class="form-control mt-2" placeholder="Enter your comment here..."></textarea>
-
-    <button class="btn btn-primary mt-2" (click)="submitReview()">Submit Review</button>
-  </div>
-
-  <!-- prompt users that already submitted a review -->
-  <div *ngIf="isLoggedIn && hasReviewed" class="mt-4">
-    <p>You have already submitted a review for this restaurant.</p>
-  </div>
-
-  <!-- Guest users are prompted to log in -->
   <div *ngIf="!isLoggedIn" class="mt-4">
     <p>Please <a routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">log in</a> to submit a review.</p>
   </div>
 
-
-
-  <!-- Show reviews -->
-  <div *ngIf="reviews.length > 0" class="reviews-section">
-    <h5>Reviews:</h5>
-    <div *ngFor="let review of reviews" class="review">
-      <p><strong>Rating:</strong>
-        <span class="star-rating">
-          <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="review.rating >= star">★</span>
-        </span>
-      </p>
-      <p><strong>Comment:</strong> {{ review.comment }}</p>
-
-      <!-- Allow edit/delete only for the user who submitted the review -->
-      <div *ngIf="isLoggedIn && review.userId === userId">
-        <button class="btn btn-warning" (click)="editReview(review)">Edit</button>
-        <button class="btn btn-danger" (click)="deleteReview(review)">Delete</button>
-      </div>
-    </div>
+  <div *ngIf="isLoggedIn && hasReviewed" class="mt-4">
+    <p>You have already submitted a review for this restaurant.</p>
   </div>
 
+  <div *ngIf="reviews.length >= 0" class="reviews-section">
+    <app-review
+      [reviews]="reviews"
+      [restaurantId]="restaurant.id"
+      [isLoggedIn]="isLoggedIn"
+      [userId]="userId"
+      [hasReviewed]="hasReviewed"
+      (reviewAdded)="loadReviews(restaurant.id)"
+      (reviewUpdated)="loadReviews(restaurant.id)"
+      (reviewDeleted)="loadReviews(restaurant.id)">
+    </app-review>
+  </div>
 
+  <div *ngIf="reviews && reviews.length === 0" class="no-reviews">
+    <p style="color:red;">No reviews available for this restaurant.</p>
+  </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
