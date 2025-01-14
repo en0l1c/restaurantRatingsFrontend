@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { ReviewService } from '../../services/review.service';
-import { Review } from '../../review.model';
+import { Review } from '../../models/review.model';
 import { AverageRatingService } from '../../services/average-rating.service';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth-service';
 import { OnChanges } from '@angular/core';
 import { debounceTime } from 'rxjs';
 
@@ -37,7 +37,7 @@ export class ReviewComponent implements OnInit, OnChanges {
     private reviewService: ReviewService,
     private route: ActivatedRoute,
     private averageRatingService: AverageRatingService,
-    private apiService: ApiService
+    private apiService: AuthService
   ) {}
 
   ngOnInit() {
@@ -84,9 +84,14 @@ export class ReviewComponent implements OnInit, OnChanges {
     this.reviewService.submitReview(newReview, this.restaurantId!).subscribe({
       next: (response) => {
         this.reviewAdded.emit(response);
-        this.averageRatingService.calculateAndSetAverageRating(this.reviews);
         this.rating = 0;
         this.comment = '';
+
+        // Instead of calling calculateAndSetAverageRatings directly,
+        // refresh the reviews for the restaurant
+        this.reviewService.getReviewsForRestaurant(this.restaurantId).subscribe(reviews => {
+          // this.reviews = reviews;
+        });
       },
       error: (err) => {
         console.error('Failed to submit review:', err);
@@ -107,7 +112,6 @@ export class ReviewComponent implements OnInit, OnChanges {
       return;
     }
 
-    // Ensure restaurantId and id are valid numbers
     if (review.restaurantId === undefined || review.id === undefined) {
       console.error('Restaurant ID or Review ID is missing.'); // This is line 79
       alert('Invalid review or restaurant data.');

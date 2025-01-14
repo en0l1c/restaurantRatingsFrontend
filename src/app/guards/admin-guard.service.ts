@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { ApiService } from '../services/api.service';
+import { AuthService } from '../services/auth-service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -8,7 +8,7 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AdminGuard implements CanActivate {
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private apiService: AuthService, private router: Router) {}
 
   canActivate(
     next: ActivatedRouteSnapshot,

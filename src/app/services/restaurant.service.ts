@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
-import {Restaurant} from '../restaurant.model';
-import {Review} from '../review.model';
+import {Restaurant} from '../models/restaurant.model';
+import {Review} from '../models/review.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,6 @@ export class RestaurantService {
     return this.http.get(`${this.baseUrl}/all`);
   }
 
-    // Method to get restaurant details by ID
   getRestaurantById(id: number): Observable<Restaurant> {
     return this.http.get<Restaurant>(`${this.baseUrl}/${id}`);
   }

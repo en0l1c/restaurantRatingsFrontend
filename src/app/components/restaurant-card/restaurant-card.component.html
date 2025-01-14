@@ -16,9 +16,9 @@
           <small class="text-muted">
             Average Rating:
             <span class="star-rating">
-              <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="averageRatings[restaurant.id] >= star">★</span>
+              <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="(averageRatings[restaurant.id!]) >= star">★</span>
             </span>
-            {{ averageRatings[restaurant.id] | number: '1.1-1' }}
+            {{ averageRatings[restaurant.id!] | number: '1.1-1' }}
           </small>
           <div *ngIf="isAdmin">
             <button class="btn btn-primary btn-sm" (click)="editRestaurant(restaurant)">Edit</button>

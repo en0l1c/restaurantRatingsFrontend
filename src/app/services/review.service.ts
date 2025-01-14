@@ -1,26 +1,24 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { Review } from '../review.model';
+import { Review } from '../models/review.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReviewService {
   private baseUrl = 'http://localhost:8080/restaurants';
 
   constructor(private http: HttpClient) {}
 
-  // Fetch reviews for a specific restaurant
-  getReviews(restaurantId: number): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.baseUrl}/${restaurantId}/reviews`);
-  }
   getReviewsForRestaurant(restaurantId: number): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.baseUrl}/${restaurantId}/reviews`);
   }
-  // Submit a new review
-  submitReview(review: Omit<Review, 'userId'>, restaurantId: number): Observable<Review> {
+
+  submitReview(
+    review: Omit<Review, 'userId'>,
+    restaurantId: number
+  ): Observable<Review> {
     const token = localStorage.getItem('authToken');
     if (!token) {
       console.error('No token found');
@@ -28,14 +26,21 @@ export class ReviewService {
     }
 
     const headers = {
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     };
 
-    return this.http.post<Review>(`${this.baseUrl}/${restaurantId}/reviews/`, review, { headers });
+    return this.http.post<Review>(
+      `${this.baseUrl}/${restaurantId}/reviews/`,
+      review,
+      { headers }
+    );
   }
 
-  // Update a review
-  updateReview(updatedReview: Review, restaurantId: number, reviewId: number): Observable<Review> {
+  updateReview(
+    updatedReview: Review,
+    restaurantId: number,
+    reviewId: number
+  ): Observable<Review> {
     const token = localStorage.getItem('authToken');
     if (!token) {
       console.error('No token found');
@@ -43,13 +48,16 @@ export class ReviewService {
     }
 
     const headers = {
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     };
 
-    return this.http.put<Review>(`${this.baseUrl}/${restaurantId}/reviews/${reviewId}`, updatedReview, { headers });
+    return this.http.put<Review>(
+      `${this.baseUrl}/${restaurantId}/reviews/${reviewId}`,
+      updatedReview,
+      { headers }
+    );
   }
 
-  // Delete a review
   deleteReview(restaurantId: number, reviewId: number): Observable<void> {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -58,13 +66,19 @@ export class ReviewService {
     }
 
     const headers = {
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     };
 
-    return this.http.delete<void>(`${this.baseUrl}/${restaurantId}/reviews/${reviewId}`, { headers });
+    return this.http.delete<void>(
+      `${this.baseUrl}/${restaurantId}/reviews/${reviewId}`,
+      { headers }
+    );
   }
 
-  toggleReviewHiddenStatus(restaurantId: number, reviewId: number): Observable<Review> {
+  toggleReviewHiddenStatus(
+    restaurantId: number,
+    reviewId: number
+  ): Observable<Review> {
     const token = localStorage.getItem('authToken');
     if (!token) {
       console.error('No token found');
@@ -72,6 +86,10 @@ export class ReviewService {
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put<Review>(`${this.baseUrl}/${restaurantId}/reviews/${reviewId}/hide`, {}, { headers });
+    return this.http.put<Review>(
+      `${this.baseUrl}/${restaurantId}/reviews/${reviewId}/hide`,
+      {},
+      { headers }
+    );
   }
 }

@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import { RestaurantService } from '../../services/restaurant.service';
-import { ApiService } from '../../services/api.service';
-import { Restaurant } from '../../restaurant.model';
-import { Review } from '../../review.model';
+import { AuthService } from '../../services/auth-service';
+import { Restaurant } from '../../models/restaurant.model';
+import { Review } from '../../models/review.model';
 import { AverageRatingService } from '../../services/average-rating.service';
 import { ReviewComponent } from '../../components/review/review.component';
 import { ReviewService } from '../../services/review.service';
@@ -31,7 +31,7 @@ export class RestaurantDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private restaurantService: RestaurantService,
     private router: Router,
-    private apiService: ApiService,
+    private apiService: AuthService,
     private reviewService: ReviewService,
     private averageRatingService: AverageRatingService
   ) {
@@ -49,8 +49,11 @@ export class RestaurantDetailComponent implements OnInit, OnDestroy {
     });
 
     const id = +this.route.snapshot.paramMap.get('id')!;
-    this.averageRatingSubscription = this.averageRatingService.averageRating$.subscribe(
-      (rating) => this.averageRating = rating
+    // this.averageRatingSubscription = this.averageRatingService.averageRatings$.subscribe(
+    //   (rating) => this.averageRating = rating
+    // );
+    this.averageRatingSubscription = this.averageRatingService.averageRatings$.subscribe(
+      (rating: { [key: number]: number }) => this.averageRating = Object.values(rating)[0]
     );
 
     this.restaurantService.getRestaurantById(id).subscribe((data) => {
@@ -79,23 +82,33 @@ export class RestaurantDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadReviews(restaurantId: number | null): void {
-    if (restaurantId === null) {
-      console.error('Restaurant ID is null. Cannot load reviews.');
-      return;
-    }
+  loadReviews(restaurantId: number): void {
     this.reviewService.getReviewsForRestaurant(restaurantId).subscribe((reviews) => {
       this.reviews = reviews;
-      console.log("Reviews fetched:", reviews); // Log the fetched reviews
-      this.averageRatingService.calculateAndSetAverageRating(this.reviews);
+      console.log("Reviews fetched:", reviews);
 
-      // If restaurantId is not in the returned reviews, add it:
-      this.reviews = reviews.map(review => ({
+      this.averageRatingService.calculateAndSetAverageRatings([
+        {
+          ...this.restaurant,
+          id: restaurantId,
+          averageRating: 0,
+          name: this.restaurant.name,
+          address: this.restaurant.address,
+          phone: this.restaurant.phone,
+          description: this.restaurant.description,
+          image: this.restaurant.image
+        }
+      ]).subscribe(() => {
+        this.averageRatingService.averageRatings$.subscribe(ratings => {
+          this.averageRating = ratings[restaurantId];
+        });
+      });
+
+      this.reviews = reviews.map((review) => ({
         ...review,
-        restaurantId: review.restaurantId || restaurantId // Use existing restaurantId or the one from the parameter
+        restaurantId: review.restaurantId || restaurantId,
       }));
 
-      // Check if user has reviewed after reviews are loaded AND user is fetched
       if (this.userId !== -1) {
         this.checkIfUserHasReviewed();
       }
@@ -118,23 +131,23 @@ export class RestaurantDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleReviewAdded(newReview: Review): void {
-    this.reviews.push(newReview);
-    this.checkIfUserHasReviewed();
-  }
-
-  handleReviewUpdated(updatedReview: Review): void {
-    const index = this.reviews.findIndex((review) => review.id === updatedReview.id);
-    if (index !== -1) {
-      this.reviews[index] = updatedReview;
-      this.checkIfUserHasReviewed();
-    }
-  }
-
-  handleReviewDeleted(deletedReviewId: number): void {
-    this.reviews = this.reviews.filter((review) => review.id !== deletedReviewId);
-    this.checkIfUserHasReviewed();
-  }
+  // handleReviewAdded(newReview: Review): void {
+  //   this.reviews.push(newReview);
+  //   this.checkIfUserHasReviewed();
+  // }
+  //
+  // handleReviewUpdated(updatedReview: Review): void {
+  //   const index = this.reviews.findIndex((review) => review.id === updatedReview.id);
+  //   if (index !== -1) {
+  //     this.reviews[index] = updatedReview;
+  //     this.checkIfUserHasReviewed();
+  //   }
+  // }
+  //
+  // handleReviewDeleted(deletedReviewId: number): void {
+  //   this.reviews = this.reviews.filter((review) => review.id !== deletedReviewId);
+  //   this.checkIfUserHasReviewed();
+  // }
 
   ngOnDestroy(): void {
     this.averageRatingSubscription.unsubscribe();

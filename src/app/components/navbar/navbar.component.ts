@@ -1,15 +1,15 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {Router} from '@angular/router';
-import {ApiService} from '../../services/api.service';
-import {Subject} from 'rxjs';
-import {RestaurantService} from '../../services/restaurant.service';  // Add FormsModule
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
+import { Subject, takeUntil } from 'rxjs';
+import { RestaurantService } from '../../services/restaurant.service';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
-  standalone: false
+  standalone: false,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
@@ -19,41 +19,37 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   private destroy$ = new Subject<void>();
 
-
   constructor(
-    private apiService: ApiService,
+    private apiService: AuthService,
     private router: Router,
-    private restaurantService: RestaurantService,
-  ) { }
+    private restaurantService: RestaurantService
+  ) {}
 
   ngOnInit() {
-    this.apiService.isLoggedIn$.subscribe(status => {
-      this.isLoggedIn = status;  // Update the navbar whenever login state changes
-      if (this.isLoggedIn) {
-        this.apiService.getCurrentUser().subscribe({
-          next: (user) => {
-            this.user = user;
-            console.log('Logged-in User:', this.user); // Debug log
-            this.isAdmin = user.role === 0;  // Set isAdmin based on role (0 for admin)
-          },
-          error: (err) => {
-            console.error('Error fetching user in navbar:', err); // Debug log
-          },
-        });
-      } else {
-        this.user = null;  // Reset the user if logged out
-        this.isAdmin = false;  // Reset admin status if logged out
-      }
-    });
+    this.apiService.isLoggedIn$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((status) => {
+        this.isLoggedIn = status;
+      });
+
+    this.apiService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.user = user;
+        console.log('Logged-in User:', this.user);
+      });
+
+    this.apiService.isAdmin$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isAdmin) => {
+        this.isAdmin = isAdmin;
+        console.log('Logged-in User is admin:', this.isAdmin);
+      });
   }
 
-
   logout() {
-    localStorage.removeItem('authToken');  // Remove token
-    this.apiService.setIsLoggedIn(false);  // Update login state
-    this.user = null;  // Clear user state if needed
-    this.isAdmin = false;  // Reset admin state
-    this.router.navigate(['/login']);  // Redirect to login page
+    this.apiService.logout(); // Call logout() from AuthService
+    this.router.navigate(['/login']);
   }
 
   onSearch(): void {

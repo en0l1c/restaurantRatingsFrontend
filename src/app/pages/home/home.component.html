@@ -1,12 +1,3 @@
-<div class="home-page">
-  <h1 *ngIf="!searchQuery">Welcome to the Restaurant Rating App</h1>
-  <h1 *ngIf="searchQuery">Search Results for "{{ searchQuery }}"</h1>
-  <div *ngIf="!searchQuery">
-    <p>Explore the best restaurants around you.</p>
-    <!-- Placeholder for restaurant cards -->
-  </div>
-  <div *ngIf="searchQuery">
-    <p>Here are the restaurants matching "{{ searchQuery }}".</p>
-    <!-- Placeholder for search-results results -->
-  </div>
+<div class="container">
+  <app-restaurant-card [restaurants]="restaurants" [averageRatings]="averageRatings" [isAdmin]="isAdmin"></app-restaurant-card>
 </div>
