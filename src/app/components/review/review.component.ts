@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { OnChanges } from '@angular/core';
 import { debounceTime } from 'rxjs';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-review',
@@ -22,7 +23,7 @@ export class ReviewComponent implements OnInit, OnChanges {
   @Output() reviewAdded = new EventEmitter<Review>();
   @Output() reviewUpdated = new EventEmitter<Review>();
   @Output() reviewDeleted = new EventEmitter<number>();
-
+  // user?: User;
   userReview: Review | undefined; // review from logged in user
   otherReviews: Review[] = [];
 

@@ -15,7 +15,11 @@
 <div *ngIf="reviews && reviews.length > 0" class="reviews-section">
   <div *ngIf="userReview" class="review">
     <div class="d-flex align-items-center mb-2">
-      <strong>Your Rating:</strong>
+      <strong *ngIf="userReview.user">Your Rating -
+
+          ({{ userReview.user.username }}):
+
+      </strong>
       <div class="star-rating ms-2">
         <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="userReview.rating >= star">★</span>
       </div>
